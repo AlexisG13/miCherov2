@@ -9,13 +9,15 @@ function parser(res: NYTimes): News[] {
     return {
       id: nyNew._id,
       title: nyNew.headline.main,
-      sectionName: nyNew.section_name,
       author: nyNew.byline.original,
-      documentType: nyNew.document_type,
       publicationDate: nyNew.pub_date,
       webUrl: nyNew.web_url,
     };
   });
 }
 
-export const nyTimesProvider = new ProviderDto<NYTimes>(url, parser);
+function buildUrl(search: string, apiKey: string): string {
+  return url + `&api-key=${apiKey}&q=${search}`;
+}
+
+export const nyTimesProvider = new ProviderDto<NYTimes>(url, parser, buildUrl);

@@ -10,7 +10,7 @@
     "typedef": [
       true,
       "call-signature",
-      "parameter",
+      "parameter"
     ],
     "member-access": [false],
     "ordered-imports": [false],

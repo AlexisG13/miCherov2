@@ -1,8 +1,6 @@
 export interface News {
   id: string;
   title: string;
-  sectionName: string;
-  documentType: string;
   author: string;
   publicationDate: Date | string;
   webUrl: string;
@@ -13,8 +11,6 @@ export interface NYTimes {
     docs: [
       {
         headline: { main: string };
-        section_name: string;
-        document_type: string;
         byline: {
           original: string;
         };
@@ -31,8 +27,6 @@ export interface Guardian {
     results: [
       {
         webTitle: string;
-        sectionName: string;
-        type: string;
         id: string;
         webPublicationDate: string;
         webUrl: string;
@@ -44,16 +38,16 @@ export interface Guardian {
   };
 }
 
-export interface NewsApi{ 
-  articles:[
+export interface NewsApi {
+  articles: [
     {
-      source:{
-        id:string;
-      }
-      title:string;
-      author:string;
-      publishedAt:string;
-      url:string;
-    }
-  ]
+      source: {
+        id: string;
+      };
+      title: string;
+      author: string;
+      publishedAt: string;
+      url: string;
+    },
+  ];
 }

@@ -9,12 +9,14 @@ function parser(res: NewsApi): News[] {
       id: art.source.id,
       title: art.title,
       author: art.author,
-      documentType: '',
-      sectionName: '',
       publicationDate: art.publishedAt,
       webUrl: art.url,
     };
   });
 }
 
-export const newsApiProvider = new ProviderDto(url, parser);
+function buildUrl(search: string, apiKey: string): string {
+  return url + `apiKey=${apiKey}&q=${search}`;
+}
+
+export const newsApiProvider = new ProviderDto(url, parser, buildUrl);

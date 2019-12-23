@@ -20,7 +20,7 @@ export class NewsService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {}
-  
+
   availableProviders = new Map()
     .set(
       'ny',
@@ -47,7 +47,7 @@ export class NewsService {
     search: string,
     provider: ProviderDto<T>,
   ): Observable<News[]> {
-    const query = provider.url + `&q=${search}&api-key=${provider.apiKey}`;
+    const query = provider.buidUrl(search, provider.apiKey);
     return this.httpService.get<T>(query).pipe(
       map(res => res.data),
       catchError(err => {
