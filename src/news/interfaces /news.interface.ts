@@ -43,3 +43,17 @@ export interface Guardian {
     ];
   };
 }
+
+export interface NewsApi{ 
+  articles:[
+    {
+      source:{
+        id:string;
+      }
+      title:string;
+      author:string;
+      publishedAt:string;
+      url:string;
+    }
+  ]
+}

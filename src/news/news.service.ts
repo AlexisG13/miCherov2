@@ -12,6 +12,7 @@ import { ProviderDto } from './dto/provider.dto';
 import { guardianProvider } from './news_providers/guardian';
 import { nyTimesProvider } from './news_providers/nytimes';
 import { ConfigService } from '@nestjs/config';
+import { newsApiProvider } from './news_providers/news_api';
 
 @Injectable()
 export class NewsService {
@@ -19,6 +20,7 @@ export class NewsService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {}
+  
   availableProviders = new Map()
     .set(
       'ny',
@@ -27,6 +29,10 @@ export class NewsService {
     .set(
       'guardian',
       guardianProvider.init(this.configService.get<string>('GUARDIAN_API_KEY')),
+    )
+    .set(
+      'newsApi',
+      newsApiProvider.init(this.configService.get<string>('NEWS_API_KEY')),
     );
 
   searchAllProviders(search: string): Observable<News[]> {
