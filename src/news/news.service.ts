@@ -4,8 +4,8 @@ import {
   BadRequestException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { map, catchError } from 'rxjs/operators';
-import { Observable, forkJoin } from 'rxjs';
+import { map, catchError, reduce } from 'rxjs/operators';
+import { Observable, merge } from 'rxjs';
 import { News } from './interfaces /news.interface';
 import { NewsFilterDto } from './dto/get_news_filter.dto';
 import { ProviderDto } from './dto/provider.dto';
@@ -13,13 +13,30 @@ import { guardianProvider } from './news_providers/guardian';
 import { nyTimesProvider } from './news_providers/nytimes';
 import { ConfigService } from '@nestjs/config';
 import { newsApiProvider } from './news_providers/news_api';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Article } from './entities/article.entity';
+import { Repository, InsertResult } from 'typeorm';
 
 @Injectable()
 export class NewsService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    @InjectRepository(Article)
+    private readonly newsRepository: Repository<Article>,
   ) {}
+
+  addArticle(): Promise<InsertResult> {
+    return this.newsRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Article)
+      .values({
+        id: 1,
+        webUrl: 'www.com',
+      })
+      .execute();
+  }
 
   availableProviders = new Map()
     .set(
@@ -40,7 +57,7 @@ export class NewsService {
     this.availableProviders.forEach(provider => {
       news.push(this.searchSingleProvider(search, provider));
     });
-    return forkJoin(...news);
+    return merge(...news).pipe(reduce((acc, val) => [...acc, ...val]));
   }
 
   searchSingleProvider<T>(

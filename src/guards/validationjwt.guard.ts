@@ -6,18 +6,18 @@ import { Request } from 'express';
 export class ValidationJWTGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest<Request>();
-    if (!req.query.provider || req.query.provider === 'ny') {
-      if (req.headers) {
-        const token = <string>req.headers['authorization'];
-        if (!token) return false;
-        try {
-          verify(token.split(' ')[1], 'secretKey');
-          return true;
-        } catch {
-          return false;
-        }
-      }
+    if (!req.headers) {
+      return false;
     }
-    return true;
+    const token = req.headers.authorization as string;
+    if (!token) {
+      return false;
+    }
+    try {
+      verify(token.split(' ')[1], 'secretKey');
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
