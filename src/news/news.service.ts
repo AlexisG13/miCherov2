@@ -3,6 +3,7 @@ import {
   HttpService,
   BadRequestException,
   UnprocessableEntityException,
+  NotFoundException,
 } from '@nestjs/common';
 import { map, catchError, reduce } from 'rxjs/operators';
 import { Observable, merge } from 'rxjs';
@@ -15,27 +16,35 @@ import { ConfigService } from '@nestjs/config';
 import { newsApiProvider } from './news_providers/news_api';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
-import { Repository, InsertResult } from 'typeorm';
+import { ArticleRepository } from './repositories/articles.repository';
 
 @Injectable()
 export class NewsService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
-    @InjectRepository(Article)
-    private readonly newsRepository: Repository<Article>,
+    @InjectRepository(ArticleRepository)
+    private readonly newsRepository: ArticleRepository,
   ) {}
 
-  addArticle(): Promise<InsertResult> {
-    return this.newsRepository
-      .createQueryBuilder()
-      .insert()
-      .into(Article)
-      .values({
-        id: 1,
-        webUrl: 'www.com',
-      })
-      .execute();
+  async getArticleByID(id: number): Promise<Article> {
+    const found = await this.newsRepository.findOne(id);
+    if (!found) {
+      throw new NotFoundException('Article not found');
+    }
+    return found;
+  }
+
+  async getAllArticles(): Promise<Article[]> {
+    const found = await this.newsRepository.find();
+    if (!found) {
+      throw new NotFoundException('No articles were found');
+    }
+    return found;
+  }
+
+  saveArticle(articleURl: string): Promise<Article> {
+    return this.newsRepository.saveArticle(articleURl);
   }
 
   availableProviders = new Map()

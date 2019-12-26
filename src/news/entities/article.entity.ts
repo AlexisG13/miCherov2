@@ -1,14 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
 @Entity()
-export class Article {
+export class Article extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
   @Column()
   webUrl: string;
 
-  constructor(id: number, webUrl: string) {
-    this.id = id;
+  constructor(webUrl: string) {
+    super();
     this.webUrl = webUrl;
   }
 }

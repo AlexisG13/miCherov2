@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { UsersRepository } from 'src/users/repositories/user.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthCredentialsDto } from './dto/auth.credentials.dto';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    @InjectRepository(UsersRepository)
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
@@ -16,6 +22,10 @@ export class AuthService {
       return result;
     }
     return null;
+  }
+
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    return this.usersRepository.signUp(authCredentialsDto);
   }
 
   async login(user: any) {
