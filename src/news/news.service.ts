@@ -83,12 +83,12 @@ export class NewsService {
 
   searchNews(newsFilterDto: NewsFilterDto): Observable<News[]> {
     if (!newsFilterDto.provider) {
-      return this.searchAllProviders(newsFilterDto.search);
+      return this.searchAllProviders(newsFilterDto.q);
     }
     const newsProvider = this.availableProviders.get(newsFilterDto.provider);
     if (!newsProvider) {
       throw new BadRequestException('An unknown provider was given');
     }
-    return this.searchSingleProvider(newsFilterDto.search, newsProvider);
+    return this.searchSingleProvider(newsFilterDto.q, newsProvider);
   }
 }

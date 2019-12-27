@@ -5,9 +5,9 @@ export class NewsFilterDto {
   @IsNotEmpty()
   provider: string;
   @IsNotEmpty()
-  search: string;
-  constructor(search: string, provider: string) {
-    this.search = search;
+  q: string;
+  constructor(q: string, provider: string) {
+    this.q = q;
     this.provider = provider;
   }
 }
