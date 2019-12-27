@@ -9,7 +9,7 @@ import {
 import { NewsService } from './news.service';
 import { Observable } from 'rxjs';
 import { News } from './interfaces /news.interface';
-import { NewsFilterDto } from './dto/get_news_filter.dto';
+import { NewsFilterDto } from './dto/get-news-filter.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('news')

@@ -8,14 +8,18 @@ import { UsersRepository } from './repositories/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NewsModule } from 'src/news/news.module';
 import { ArticleRepository } from 'src/news/repositories/articles.repository';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   providers: [UsersService, JwtStrategy],
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: 'secretKey',
-      signOptions: { expiresIn: '60m' },
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('SECRET'),
+        signOptions: { expiresIn: '60m' },
+      }),
+      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([UsersRepository]),
     TypeOrmModule.forFeature([ArticleRepository]),

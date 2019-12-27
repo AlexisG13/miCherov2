@@ -8,7 +8,7 @@ import {
 import { map, catchError, reduce } from 'rxjs/operators';
 import { Observable, merge } from 'rxjs';
 import { News } from './interfaces /news.interface';
-import { NewsFilterDto } from './dto/get_news_filter.dto';
+import { NewsFilterDto } from './dto/get-news-filter.dto';
 import { ProviderDto } from './dto/provider.dto';
 import { guardianProvider } from './news_providers/guardian';
 import { nyTimesProvider } from './news_providers/nytimes';
