@@ -20,14 +20,17 @@ A simple API for news searching on the New York Times API and The Guardian API!.
 ```bash
 $ npm install
 ```
-## Create the database "miChero" on Postgresql
+## Database
+### 1- Create the database "miChero" on Postgresql
 
-## Restore the dump included in the scripts directory
+### 2- Restore the dump included in the scripts directory
 
 ```bash
   $psql miChero < scripts/DB_BACKUP
 ```
-# A sample .env file is included on the root directory; if you wish to provide your own .env file you should include all the required variables in the sample .env file.
+## Enviroment variables
+
+### A sample .env file is included on the root directory; if you wish to provide your own .env file you should include all the required variables in the sample .env file.
 
 ## Running the app
 
