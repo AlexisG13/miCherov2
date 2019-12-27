@@ -12,6 +12,7 @@ import { User } from 'src/users/entities/users.entity';
 import { AccessToken } from './dto/access-token.dto';
 import { ArticleRepository } from 'src/news/repositories/articles.repository';
 import { Article } from 'src/news/entities/article.entity';
+import { PasswordChangeDto } from './dto/password-change.dto';
 
 @Injectable()
 export class UsersService {
@@ -44,5 +45,12 @@ export class UsersService {
 
   async getArticles(userId: number): Promise<Article[]> {
     return this.usersRepository.getArticles(userId);
+  }
+
+  async changePassword(
+    user: User,
+    passwordDto: PasswordChangeDto,
+  ): Promise<void> {
+    return this.usersRepository.changePassword(user, passwordDto);
   }
 }

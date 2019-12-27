@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
 import { Article } from 'src/news/entities/article.entity';
+import { PasswordChangeDto } from '../dto/password-change.dto';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
@@ -35,15 +36,15 @@ export class UsersRepository extends Repository<User> {
   }
 
   async changePassword(
-    authCredentialsDto: AuthCredentialsDto,
-    newPassword: string,
+    user: User,
+    passwordDto: PasswordChangeDto,
   ): Promise<void> {
-    const user = await this.validatePassword(authCredentialsDto);
-    if (!user) {
-      throw new UnauthorizedException('Wrong username or password');
+    const validate = user.validatePassword(passwordDto.password);
+    if (!validate) {
+      throw new UnauthorizedException('Wrong password');
     }
     const salt = await genSalt();
-    const hashedPassword = await hash(newPassword, salt);
+    const hashedPassword = await hash(passwordDto.newPassword, salt);
     user.password = hashedPassword;
     user.salt = salt;
     this.save(user);
