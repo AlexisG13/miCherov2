@@ -1,8 +1,13 @@
 import { User } from '../entities/users.entity';
 import { EntityRepository, Repository } from 'typeorm';
-import { AuthCredentialsDto } from 'src/auth/dto/auth.credentials.dto';
-import { ConflictException } from '@nestjs/common';
+import { AuthCredentialsDto } from 'src/users/dto/auth.credentials.dto';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { genSalt, hash } from 'bcrypt';
+import { Article } from 'src/news/entities/article.entity';
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<User> {
@@ -14,7 +19,46 @@ export class UsersRepository extends Repository<User> {
     }
     const salt = await genSalt();
     const hashedPassword = await hash(password, salt);
-    const user = new User(username, hashedPassword, salt);
-    user.save();
+    const user = { username, password: hashedPassword, salt };
+    this.save(user);
+  }
+
+  async validatePassword(
+    authCredentialsDto: AuthCredentialsDto,
+  ): Promise<User | null> {
+    const { username, password } = authCredentialsDto;
+    const user = await this.findOne({ username });
+    if (user && (await user.validatePassword(password))) {
+      return user;
+    }
+    return null;
+  }
+
+  async changePassword(
+    authCredentialsDto: AuthCredentialsDto,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.validatePassword(authCredentialsDto);
+    if (!user) {
+      throw new UnauthorizedException('Wrong username or password');
+    }
+    const salt = await genSalt();
+    const hashedPassword = await hash(newPassword, salt);
+    user.password = hashedPassword;
+    user.salt = salt;
+    this.save(user);
+  }
+
+  async getArticles(userId: number): Promise<Article[]> {
+    const user = await this.findOne({
+      relations: ['articles'],
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user.articles;
   }
 }

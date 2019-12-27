@@ -1,31 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { User } from './dto/user.dto';
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+  NotFoundException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersRepository } from 'src/users/repositories/user.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthCredentialsDto } from './dto/auth.credentials.dto';
+import { User } from 'src/users/entities/users.entity';
+import { AccessToken } from './dto/access-token.dto';
+import { ArticleRepository } from 'src/news/repositories/articles.repository';
+import { Article } from 'src/news/entities/article.entity';
 
 @Injectable()
 export class UsersService {
-  private readonly users: User[];
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(UsersRepository)
+    private readonly usersRepository: UsersRepository,
+    private readonly articlesRepository: ArticleRepository,
+  ) {}
 
-  constructor() {
-    this.users = [
-      {
-        userId: 1,
-        username: 'alexis',
-        password: '1234',
-      },
-      {
-        userId: 2,
-        username: 'frank',
-        password: '123',
-      },
-      {
-        userId: 3,
-        username: 'kevin',
-        password: '111',
-      },
-    ];
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
+    return this.usersRepository.signUp(authCredentialsDto);
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find(user => user.username === username);
+  async login(authCredentialsDto: AuthCredentialsDto): Promise<AccessToken> {
+    const user = await this.usersRepository.validatePassword(
+      authCredentialsDto,
+    );
+    if (!user) {
+      throw new UnauthorizedException('Wrong username or password');
+    }
+    const payload = { username: user.username };
+    const accessToken = this.jwtService.sign(payload);
+    return { token: accessToken };
+  }
+
+  async saveArticle(user: User, articleUrl: string): Promise<Article> {
+    return this.articlesRepository.saveArticle(user, articleUrl);
+  }
+
+  async getArticles(userId: number): Promise<Article[]> {
+    return this.usersRepository.getArticles(userId);
   }
 }

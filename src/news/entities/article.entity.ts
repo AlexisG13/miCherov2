@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+} from 'typeorm';
+import { User } from 'src/users/entities/users.entity';
 
 @Entity()
 export class Article extends BaseEntity {
@@ -6,9 +15,14 @@ export class Article extends BaseEntity {
   id?: number;
   @Column()
   webUrl: string;
-
-  constructor(webUrl: string) {
+  @ManyToOne(
+    type => User,
+    user => user.articles,
+  )
+  user: User;
+  constructor(webUrl: string, user: User) {
     super();
     this.webUrl = webUrl;
+    this.user = user;
   }
 }

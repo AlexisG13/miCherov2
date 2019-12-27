@@ -43,10 +43,6 @@ export class NewsService {
     return found;
   }
 
-  saveArticle(articleURl: string): Promise<Article> {
-    return this.newsRepository.saveArticle(articleURl);
-  }
-
   availableProviders = new Map()
     .set(
       'ny',

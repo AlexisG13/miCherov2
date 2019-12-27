@@ -1,11 +1,26 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
+import { UsersController } from './users.controller';
 import { UsersRepository } from './repositories/user.repository';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { NewsModule } from 'src/news/news.module';
+import { ArticleRepository } from 'src/news/repositories/articles.repository';
 
 @Module({
-  providers: [UsersService],
-  imports: [TypeOrmModule.forFeature([UsersRepository])],
-  exports: [UsersService, TypeOrmModule.forFeature([UsersRepository])],
+  providers: [UsersService, JwtStrategy],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: 'secretKey',
+      signOptions: { expiresIn: '60m' },
+    }),
+    TypeOrmModule.forFeature([UsersRepository]),
+    TypeOrmModule.forFeature([ArticleRepository]),
+  ],
+  exports: [UsersService, JwtStrategy, PassportModule],
+  controllers: [UsersController],
 })
 export class UsersModule {}

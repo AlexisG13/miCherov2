@@ -20,12 +20,6 @@ import { Article } from './entities/article.entity';
 export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
-  @Post()
-  @UseGuards(ValidationJWTGuard)
-  saveNews(@Body('articleUrl') articleURl: string): Promise<Article> {
-    return this.newsService.saveArticle(articleURl);
-  }
-
   @Get()
   @UseGuards(ValidationJWTGuard)
   @UsePipes(ValidationPipe)

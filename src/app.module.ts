@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { NewsModule } from './news/news.module';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -11,7 +10,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     NewsModule,
     ConfigModule.forRoot({ isGlobal: true }),
-    AuthModule,
     UsersModule,
     TypeOrmModule.forRoot(),
   ],
